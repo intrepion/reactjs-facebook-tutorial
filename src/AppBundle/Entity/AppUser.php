@@ -2,15 +2,18 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * AppUser
  *
- * @ORM\Table()
+ * @ORM\Table(name="app_user")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\AppUserRepository")
  */
-class AppUser
+class AppUser implements AdvancedUserInterface
 {
     /**
      * @var integer
@@ -38,38 +41,50 @@ class AppUser
     /**
      * @var string
      *
-     * @ORM\Column(name="salt", type="string", length=255)
+     * @ORM\Column(name="salt", type="string", length=255, nullable=true)
      */
     private $salt;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="accountExpired", type="boolean")
+     * @ORM\Column(name="accountExpired", type="boolean", nullable=true)
      */
     private $accountExpired;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="accountLocked", type="boolean")
+     * @ORM\Column(name="accountLocked", type="boolean", nullable=true)
      */
     private $accountLocked;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="credentialsExpired", type="boolean")
+     * @ORM\Column(name="credentialsExpired", type="boolean", nullable=true)
      */
     private $credentialsExpired;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="enabled", type="boolean")
+     * @ORM\Column(name="enabled", type="boolean", nullable=true)
      */
     private $enabled;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="AppRole", inversedBy="appUser")
+     * @ORM\JoinTable(name="app_user__app_role",
+     *      joinColumns={@ORM\JoinColumn(name="app_user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="app_role_id", referencedColumnName="id")}
+     *      )
+     **/
+    private $appRole;
+
+    public function __construct() {
+        $this->appRole = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -85,7 +100,6 @@ class AppUser
      * Set username
      *
      * @param string $username
-     *
      * @return AppUser
      */
     public function setUsername($username)
@@ -109,7 +123,6 @@ class AppUser
      * Set password
      *
      * @param string $password
-     *
      * @return AppUser
      */
     public function setPassword($password)
@@ -133,7 +146,6 @@ class AppUser
      * Set salt
      *
      * @param string $salt
-     *
      * @return AppUser
      */
     public function setSalt($salt)
@@ -157,7 +169,6 @@ class AppUser
      * Set accountExpired
      *
      * @param boolean $accountExpired
-     *
      * @return AppUser
      */
     public function setAccountExpired($accountExpired)
@@ -181,7 +192,6 @@ class AppUser
      * Set accountLocked
      *
      * @param boolean $accountLocked
-     *
      * @return AppUser
      */
     public function setAccountLocked($accountLocked)
@@ -205,7 +215,6 @@ class AppUser
      * Set credentialsExpired
      *
      * @param boolean $credentialsExpired
-     *
      * @return AppUser
      */
     public function setCredentialsExpired($credentialsExpired)
@@ -229,7 +238,6 @@ class AppUser
      * Set enabled
      *
      * @param boolean $enabled
-     *
      * @return AppUser
      */
     public function setEnabled($enabled)
@@ -248,5 +256,84 @@ class AppUser
     {
         return $this->enabled;
     }
-}
 
+    public function getRoles()
+    {
+        return array_map(function (AppRole $appRole) {
+            return $appRole->getRole();
+        }, $this->appRole->toArray());
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isAccountNonExpired()
+    {
+        if (is_null($this->accountExpired)) {
+            return true;
+        }
+
+        return !$this->accountExpired;
+    }
+
+    public function isAccountNonLocked()
+    {
+        if (is_null($this->accountLocked)) {
+            return true;
+        }
+
+        return !$this->accountLocked;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        if (is_null($this->credentialsExpired)) {
+            return true;
+        }
+
+        return !$this->credentialsExpired;
+    }
+
+    public function isEnabled()
+    {
+        if (is_null($this->enabled)) {
+            return false;
+        }
+
+        return $this->enabled;
+    }
+
+    /**
+     * Add appRole
+     *
+     * @param \AppBundle\Entity\AppRole $appRole
+     * @return AppUser
+     */
+    public function addAppRole(\AppBundle\Entity\AppRole $appRole)
+    {
+        $this->appRole[] = $appRole;
+
+        return $this;
+    }
+
+    /**
+     * Remove appRole
+     *
+     * @param \AppBundle\Entity\AppRole $appRole
+     */
+    public function removeAppRole(\AppBundle\Entity\AppRole $appRole)
+    {
+        $this->appRole->removeElement($appRole);
+    }
+
+    /**
+     * Get appRole
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAppRole()
+    {
+        return $this->appRole;
+    }
+}
