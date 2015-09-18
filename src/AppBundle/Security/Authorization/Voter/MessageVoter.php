@@ -62,5 +62,6 @@ class MessageVoter extends AbstractVoter implements VoterFilterInterface
 
     public function filter(QueryBuilder $qb, array $filters, $alias = 'e')
     {
+        return $qb;
     }
 }
