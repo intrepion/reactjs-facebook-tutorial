@@ -1,3 +1,8 @@
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
+
+# Place it underneath it all - it contains a catch-all route.
+go_integro_hateoas:
+    resource: "@GoIntegroHateoasBundle/Resources/config/routing.yml"
+    prefix: /api/v2

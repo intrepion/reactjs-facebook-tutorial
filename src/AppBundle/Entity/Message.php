@@ -4,13 +4,15 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use GoIntegro\Hateoas\JsonApi\ResourceEntityInterface;
+
 /**
  * Message
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="AppBundle\Entity\MessageRepository")
  */
-class Message
+class Message implements ResourceEntityInterface
 {
     /**
      * @var integer
@@ -125,4 +127,3 @@ class Message
         return $this->sent;
     }
 }
-

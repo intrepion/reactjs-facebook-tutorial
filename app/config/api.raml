@@ -1,0 +1,25 @@
+#%RAML 0.8
+title: HATEOAS Inc. Example API
+version: v1
+baseUri: http://localhost:8000/api/{version}
+mediaType: application/vnd.api+json
+/messages:
+  get:
+    description: Fetches all messages.
+    responses:
+      200:
+  post:
+    description: Creates one or more messages.
+    responses:
+      201:
+  /{message-ids}:
+    get:
+      description: Fetches messages by Id.
+      responses:
+        200:
+    put:
+      description: Updates one or more messages by Id.
+      responses:
+        200:
+    delete:
+      description: Deletes one or more messages by Id.

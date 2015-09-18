@@ -17,3 +17,7 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    api.base_url: "http://api.gointegro.com"
+    api.url_path: "/api/v2"
+    api.resource_class_path: "Rest2/Resource"
